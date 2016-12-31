@@ -12,26 +12,29 @@ Slice在元素插入时，如果容量已经满了，会重新拷贝一份到新
 测试代码:
 ```go
 func main() {
-	fs := FixedSlice.NewFixedSlice(3)
+	fs := fixedslice.New(3)
 	fs.Append(20)
 	fs.Append("test")
 	fs.Append(true)
 
+	fmt.Println(fs)                 //输出[20 test true]
+	var pfs *interface{} = fs.At(1) //取第二个元素的地址
+
 	fs.Append(50)
-	fs.Append(60)
+	fs.Append(60)   //增加两个元素后，已经超过了初始容量的大小
+	fmt.Println(fs) //输出[20 test true 50 60]
+	*pfs = 10       //通过指针修改第二个元素的值
 
-	for i := 0; i < fs.Count(); i++ {
-		fmt.Println(i, "=", *fs.At(i))
-	}
+	fmt.Println(fs) //输出[20 10 true 50 60]，可见*pfs=10确实修改了元素的值，
+					//也证明了元素的地址并没有因为容量增加瑞改变了地址
 
-	fs1 := FixedSlice.NewFixedSlice(3)
-	fs1.Copy(fs)
-	for i := 0; i < fs1.Count(); i++ {
-		fmt.Println(i, "=", *fs1.At(i))
-	}
+	fs1 := fixedslice.New(3)
+	fs1.Copy(fs) //拷贝
 
-	var i interface{} = *fs.At(0)
-	var ii int = i.(int)
-	fmt.Println("ii=", ii)
+	fmt.Println(fs1) //输出[20 10 true 50 60]
+	pfs = fs1.At(2)
+	*pfs = 30        //通过指针修改第三个元素的值
+	fmt.Println(fs)  //输出[20 10 true 50 60]
+	fmt.Println(fs1) //输出[20 10 30 50 60]，可见fs的值并没有变，证明fs1.Copy是深拷贝
 }
 ```
