@@ -23,7 +23,7 @@ import (
 	"fmt"
 )
 
-type fixedslice struct {
+type FixedSlice struct {
 	initCapacity int            //initCapacity值决定了每个slice的容量
 	Datas        []interface{}  //维护slice的slice
 	currentSlice *[]interface{} //当前的slice的指针，添加的的元素进入该slice
@@ -32,8 +32,8 @@ type fixedslice struct {
 }
 
 //构造函数
-func New(initCapacity int) *fixedslice {
-	var fs fixedslice
+func New(initCapacity int) *FixedSlice {
+	var fs FixedSlice
 
 	fs.initCapacity = initCapacity
 	fs.Datas = make([]interface{}, 0)
@@ -46,7 +46,7 @@ func New(initCapacity int) *fixedslice {
 	return &fs
 }
 
-func (fs *fixedslice) String() string {
+func (fs *FixedSlice) String() string {
 	var sRet string = "["
 	var p *interface{}
 
@@ -63,7 +63,7 @@ func (fs *fixedslice) String() string {
 }
 
 //添加元素，参数为interface{}，意味着可以添加任何类型的元素
-func (fs *fixedslice) Append(v interface{}) *fixedslice {
+func (fs *FixedSlice) Append(v interface{}) *FixedSlice {
 	//如果当前slice的容量已满，则新建一个
 	if len(*fs.currentSlice) == cap(*fs.currentSlice) {
 		sl := make([]interface{}, 0, fs.initCapacity)
@@ -77,7 +77,7 @@ func (fs *fixedslice) Append(v interface{}) *fixedslice {
 }
 
 //返回元素的总数
-func (fs *fixedslice) Count() int {
+func (fs *FixedSlice) Count() int {
 	return fs.count
 }
 
@@ -87,7 +87,7 @@ func (fs *fixedslice) Count() int {
 	var ii int = i.(int)
 	fmt.Println("ii=", ii)
 */
-func (fs *fixedslice) At(index int) *interface{} {
+func (fs *FixedSlice) At(index int) *interface{} {
 	//首先确定是哪个slice
 	i1 := index / fs.initCapacity
 	if i1 > fs.currentIndex {
@@ -107,7 +107,7 @@ func (fs *fixedslice) At(index int) *interface{} {
 }
 
 //从src中拷贝内容，是深度拷贝
-func (fs *fixedslice) Copy(src *fixedslice) *fixedslice {
+func (fs *FixedSlice) Copy(src *FixedSlice) *FixedSlice {
 	//原内容清空
 	fs.Datas = nil
 	fs.initCapacity = src.initCapacity
